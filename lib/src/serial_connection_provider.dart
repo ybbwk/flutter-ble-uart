@@ -30,7 +30,7 @@ class SerialConnectionProvider {
       Duration timeout}) async* {
     yield* _ble.scan(
         scanMode: scanMode,
-        withServices: [_config.serviceId],
+        // withServices: [_config.serviceId],
         withDevices: withDevices,
         timeout: timeout);
   }
