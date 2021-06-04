@@ -72,11 +72,12 @@ class SerialConnection {
     // Connect to device
     _updateState(SerialConnectionState.connecting);
     try {
-      _deviceConnection = _provider._ble
-          .connect(_device, timeout: timeout)
+      _deviceConnection = _device
+          .connect(timeout: timeout)
+          .asStream()
           .listen(null, onDone: disconnect);
       _deviceStateSubscription =
-          _device.onStateChanged().listen(_handleBluetoothDeviceState);
+          _device.state.listen(_handleBluetoothDeviceState);
     } on Exception catch (ex) {
       print('SerialConnection exception during connect: ${ex.toString()}');
       disconnect();
@@ -89,7 +90,7 @@ class SerialConnection {
       _updateState(SerialConnectionState.disconnecting);
       _txCharacteristic = null;
       if (_rxCharacteristic != null) {
-        await _device.setNotifyValue(_rxCharacteristic, false);
+        await _rxCharacteristic.setNotifyValue(false);
       }
       _rxCharacteristic = null;
       _incomingDataSubscription?.cancel();
@@ -127,8 +128,7 @@ class SerialConnection {
     while (offset < raw.length) {
       var chunk = raw.skip(offset).take(chunkSize).toList();
       offset += chunkSize;
-      await _device.writeCharacteristic(_txCharacteristic, chunk,
-          type: CharacteristicWriteType.withResponse);
+      await _txCharacteristic.write(chunk, withoutResponse: false);
     }
   }
 
@@ -179,10 +179,9 @@ class SerialConnection {
 
     // Set up notifications for RX characteristic
     _updateState(SerialConnectionState.subscribing);
-    await _device.setNotifyValue(_rxCharacteristic, true);
+    await _rxCharacteristic.setNotifyValue(true);
     _incomingDataSubscription?.cancel();
-    _incomingDataSubscription =
-        _device.onValueChanged(_rxCharacteristic).listen(_onIncomingData);
+    _incomingDataSubscription = _rxCharacteristic.value.listen(_onIncomingData);
 
     // Done!
     _updateState(SerialConnectionState.connected);
