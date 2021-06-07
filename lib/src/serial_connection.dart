@@ -100,6 +100,7 @@ class SerialConnection {
       _deviceConnection?.cancel();
       _deviceConnection = null;
       _updateState(SerialConnectionState.disconnected);
+      await _device.disconnect();
     }
   }
 
