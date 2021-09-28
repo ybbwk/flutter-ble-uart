@@ -5,7 +5,7 @@ class SerialConnectionProvider {
   static final SerialConnectionProvider _singleton =
       new SerialConnectionProvider._internal();
   final FlutterBlue _ble = FlutterBlue.instance;
-  SerialServiceConfig _config;
+  late SerialServiceConfig _config;
 
   factory SerialConnectionProvider() {
     return _singleton;
@@ -28,7 +28,7 @@ class SerialConnectionProvider {
       {ScanMode scanMode = ScanMode.lowLatency,
       List<Guid> withServices = const [],
       List<Guid> withDevices = const [],
-      Duration timeout}) async* {
+      Duration? timeout}) async* {
     yield* _ble.scan(
         scanMode: scanMode,
         withServices: withServices,
@@ -41,7 +41,7 @@ class SerialConnectionProvider {
   ///
   /// Internally this calls [scan] with the given timeout. By default
   /// the timeout is set to 10 seconds.
-  Future<Iterable<BluetoothDevice>> simplifiedScan({Duration timeout}) async {
+  Future<Iterable<BluetoothDevice>> simplifiedScan({Duration? timeout}) async {
     if (timeout == null) {
       timeout = Duration(seconds: 10);
     }

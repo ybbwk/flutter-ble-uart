@@ -17,11 +17,11 @@ class SerialConnection {
       StreamController<String>.broadcast();
 
   SerialConnectionState _state = SerialConnectionState.disconnected;
-  BluetoothCharacteristic _txCharacteristic;
-  BluetoothCharacteristic _rxCharacteristic;
-  StreamSubscription _deviceConnection;
-  StreamSubscription _deviceStateSubscription;
-  StreamSubscription _incomingDataSubscription;
+  BluetoothCharacteristic? _txCharacteristic;
+  BluetoothCharacteristic? _rxCharacteristic;
+  StreamSubscription? _deviceConnection;
+  StreamSubscription? _deviceStateSubscription;
+  StreamSubscription? _incomingDataSubscription;
 
   /// Subscribe/listen to get notified of state changes.
   Stream<SerialConnectionState> get onStateChange =>
@@ -51,7 +51,7 @@ class SerialConnection {
   ///
   /// In case the device is already connected or busy connecting, this will
   /// throw a [SerialConnectionWrongStateException].
-  Future<void> connect({Duration timeout}) async {
+  Future<void> connect({Duration? timeout}) async {
     if (_state != SerialConnectionState.disconnected) {
       throw SerialConnectionWrongStateException(_state);
     }
@@ -90,7 +90,7 @@ class SerialConnection {
       _updateState(SerialConnectionState.disconnecting);
       _txCharacteristic = null;
       if (_rxCharacteristic != null) {
-        await _rxCharacteristic.setNotifyValue(false);
+        await _rxCharacteristic!.setNotifyValue(false);
       }
       _rxCharacteristic = null;
       _incomingDataSubscription?.cancel();
@@ -111,9 +111,9 @@ class SerialConnection {
   /// page that is using this connection is exited (disposed).
   Future<void> close() async {
     await disconnect();
-    await _onTextReceivedController?.close();
-    await _onDataReceivedController?.close();
-    await _onStateChangeController?.close();
+    await _onTextReceivedController.close();
+    await _onDataReceivedController.close();
+    await _onStateChangeController.close();
     _state = SerialConnectionState.disconnected;
   }
 
@@ -129,7 +129,7 @@ class SerialConnection {
     while (offset < raw.length) {
       var chunk = raw.skip(offset).take(chunkSize).toList();
       offset += chunkSize;
-      await _txCharacteristic.write(chunk, withoutResponse: false);
+      await _txCharacteristic!.write(chunk, withoutResponse: false);
     }
   }
 
@@ -180,9 +180,10 @@ class SerialConnection {
 
     // Set up notifications for RX characteristic
     _updateState(SerialConnectionState.subscribing);
-    await _rxCharacteristic.setNotifyValue(true);
+    await _rxCharacteristic!.setNotifyValue(true);
     _incomingDataSubscription?.cancel();
-    _incomingDataSubscription = _rxCharacteristic.value.listen(_onIncomingData);
+    _incomingDataSubscription =
+        _rxCharacteristic!.value.listen(_onIncomingData);
 
     // Done!
     _updateState(SerialConnectionState.connected);
