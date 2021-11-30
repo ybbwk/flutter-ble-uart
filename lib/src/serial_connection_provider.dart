@@ -26,6 +26,17 @@ class SerialConnectionProvider {
   /// Internally this calls the [FlutterBlue.scan] method.
   Stream<ScanResult> scan(
       {ScanMode scanMode = ScanMode.lowLatency,
+      List<Guid> withDevices = const [],
+      Duration? timeout}) async* {
+    yield* _ble.scan(
+        scanMode: scanMode,
+        withServices: [_config.serviceId],
+        withDevices: withDevices,
+        timeout: timeout);
+  }
+
+  Stream<ScanResult> scanWithServices(
+      {ScanMode scanMode = ScanMode.lowLatency,
       List<Guid> withServices = const [],
       List<Guid> withDevices = const [],
       Duration? timeout}) async* {
