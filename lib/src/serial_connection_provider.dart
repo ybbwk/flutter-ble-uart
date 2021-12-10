@@ -68,4 +68,9 @@ class SerialConnectionProvider {
   SerialConnection init(BluetoothDevice device) {
     return SerialConnection(this, device);
   }
+
+  /// Stop scan.
+  Future stopScan() async {
+    return _ble.stopScan();
+  }
 }
