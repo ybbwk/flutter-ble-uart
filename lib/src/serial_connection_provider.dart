@@ -73,4 +73,9 @@ class SerialConnectionProvider {
   Future stopScan() async {
     return _ble.stopScan();
   }
+
+  /// Get FlutterBlue instance
+  FlutterBlue get instance {
+    return _ble;
+  }
 }
