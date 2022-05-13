@@ -1,7 +1,8 @@
 /// Package to integrate UART (Serial) over Bluetooth Low Energy into your Flutter app
 library flutter_ble_uart;
 
-import 'package:flutter_blue/flutter_blue.dart';
+// import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:async';
 import 'dart:convert';
 

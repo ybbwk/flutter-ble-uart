@@ -4,7 +4,7 @@ part of flutter_ble_uart;
 class SerialConnectionProvider {
   static final SerialConnectionProvider _singleton =
       new SerialConnectionProvider._internal();
-  final FlutterBlue _ble = FlutterBlue.instance;
+  final FlutterBluePlus _ble = FlutterBluePlus.instance;
   late SerialServiceConfig _config;
 
   factory SerialConnectionProvider() {
@@ -75,7 +75,7 @@ class SerialConnectionProvider {
   }
 
   /// Get FlutterBlue instance
-  FlutterBlue get instance {
+  FlutterBluePlus get instance {
     return _ble;
   }
 }
