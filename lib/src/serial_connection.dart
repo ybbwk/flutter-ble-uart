@@ -163,9 +163,8 @@ class SerialConnection {
 
     // Search for serial service
     List<BluetoothService> services = await _device.discoverServices();
-    BluetoothService serialService =
-        services.firstWhere((s) => s.uuid == _provider._config.serviceId);
-    if (serialService == null) {
+
+    if (services.isEmpty) {
       await disconnect();
       print('BLE UART service NOT found on device $deviceId');
       throw SerialConnectionServiceNotFoundException(_provider._config);
@@ -173,6 +172,8 @@ class SerialConnection {
       print('BLE UART service found on device $deviceId');
     }
 
+    BluetoothService serialService =
+        services.firstWhere((s) => s.uuid == _provider._config.serviceId);
     _txCharacteristic = _findCharacteristic(
         serialService, _provider._config.txCharacteristicId);
     _rxCharacteristic = _findCharacteristic(
@@ -191,14 +192,13 @@ class SerialConnection {
 
   BluetoothCharacteristic _findCharacteristic(
       BluetoothService service, Guid characteristicId) {
-    BluetoothCharacteristic characteristic =
-        service.characteristics.firstWhere((c) => c.uuid == characteristicId);
-    if (characteristic == null) {
+    if (service.characteristics.isEmpty) {
       print('BLE UART Characteristic (${characteristicId.toString()} NOT '
           'found on device $deviceId.');
       throw SerialConnectionCharacteristicNotFoundException(characteristicId);
     }
-    return characteristic;
+    return service.characteristics
+        .firstWhere((c) => c.uuid == characteristicId);
   }
 
   void _onIncomingData(List<int> data) {
