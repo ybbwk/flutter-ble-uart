@@ -211,7 +211,7 @@ class SerialConnection {
         if (text.length > 0) {
           _onTextReceivedController.add(text);
         }
-      } catch (Exception) {
+      } catch (e) {
         // ignore errors for now
         // TODO Find a solution for this.
       }
