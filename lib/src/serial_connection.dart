@@ -184,7 +184,7 @@ class SerialConnection {
     await _rxCharacteristic!.setNotifyValue(true);
     _incomingDataSubscription?.cancel();
     _incomingDataSubscription =
-        _rxCharacteristic!.value.listen(_onIncomingData);
+        _rxCharacteristic!.lastValueStream.listen(_onIncomingData);
 
     // Done!
     _updateState(SerialConnectionState.connected);
