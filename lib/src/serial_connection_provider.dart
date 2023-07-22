@@ -59,7 +59,7 @@ class SerialConnectionProvider {
 
     Map<String, BluetoothDevice> devices = {};
     devices.addEntries(await scan(timeout: timeout)
-        .map((sr) => MapEntry(sr.device.id.id, sr.device))
+        .map((sr) => MapEntry(sr.device.remoteId.str, sr.device))
         .toList());
     return devices.values;
   }

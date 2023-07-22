@@ -37,7 +37,7 @@ class SerialConnection {
   BluetoothDevice get device => _device;
 
   /// String representation of the [BluetoothDevice] identifier.
-  String get deviceId => _device.id.toString();
+  String get deviceId => _device.remoteId.toString();
 
   SerialConnection(this._provider, this._device);
 
@@ -77,7 +77,7 @@ class SerialConnection {
           .asStream()
           .listen(null, onDone: disconnect);
       _deviceStateSubscription =
-          _device.state.listen(_handleBluetoothDeviceState);
+          _device.connectionState.listen(_handleBluetoothDeviceState);
     } on Exception catch (ex) {
       print('SerialConnection exception during connect: ${ex.toString()}');
       disconnect();
@@ -152,8 +152,8 @@ class SerialConnection {
   }
 
   Future<void> _handleBluetoothDeviceState(
-      BluetoothDeviceState deviceState) async {
-    if (deviceState == BluetoothDeviceState.connected) {
+      BluetoothConnectionState deviceState) async {
+    if (deviceState == BluetoothConnectionState.connected) {
       await _discoverServices();
     }
   }
@@ -172,8 +172,8 @@ class SerialConnection {
       print('BLE UART service found on device $deviceId');
     }
 
-    BluetoothService serialService =
-        services.firstWhere((s) => s.uuid == _provider._config.serviceId);
+    BluetoothService serialService = services
+        .firstWhere((s) => s.serviceUuid == _provider._config.serviceId);
     _txCharacteristic = _findCharacteristic(
         serialService, _provider._config.txCharacteristicId);
     _rxCharacteristic = _findCharacteristic(
@@ -198,7 +198,7 @@ class SerialConnection {
       throw SerialConnectionCharacteristicNotFoundException(characteristicId);
     }
     return service.characteristics
-        .firstWhere((c) => c.uuid == characteristicId);
+        .firstWhere((c) => c.characteristicUuid == characteristicId);
   }
 
   void _onIncomingData(List<int> data) {
