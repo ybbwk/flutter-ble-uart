@@ -4,7 +4,6 @@ part of flutter_ble_uart;
 class SerialConnectionProvider {
   static final SerialConnectionProvider _singleton =
       new SerialConnectionProvider._internal();
-  final FlutterBluePlus _ble = FlutterBluePlus.instance;
   late SerialServiceConfig _config;
 
   factory SerialConnectionProvider() {
@@ -28,7 +27,7 @@ class SerialConnectionProvider {
       {ScanMode scanMode = ScanMode.lowLatency,
       List<Guid> withDevices = const [],
       Duration? timeout}) async* {
-    yield* _ble.scan(
+    yield* FlutterBluePlus.scan(
         scanMode: scanMode,
         withServices: [_config.serviceId],
         withDevices: withDevices,
@@ -40,7 +39,7 @@ class SerialConnectionProvider {
       List<Guid> withServices = const [],
       List<Guid> withDevices = const [],
       Duration? timeout}) async* {
-    yield* _ble.scan(
+    yield* FlutterBluePlus.scan(
         scanMode: scanMode,
         withServices: withServices,
         // withServices: [_config.serviceId],
@@ -71,11 +70,6 @@ class SerialConnectionProvider {
 
   /// Stop scan.
   Future stopScan() async {
-    return _ble.stopScan();
-  }
-
-  /// Get FlutterBlue instance
-  FlutterBluePlus get instance {
-    return _ble;
+    return FlutterBluePlus.stopScan();
   }
 }
